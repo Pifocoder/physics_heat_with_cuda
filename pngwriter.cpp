@@ -279,36 +279,91 @@ void cmap(double value, const double scaling, const double offset,
 
 
 // Function to load image file and return table
-std::vector<std::vector<int>> loadImage(const char* filename) {
-    std::ifstream file(filename, std::ios::in | std::ios::binary);
-    if (!file.is_open()) {
+std::vector<std::vector<bool>> loadImage(const char* filename) {
+    int width;
+    int height;
+    std::vector<std::vector<bool>> image;
+
+    // Open the PNG file
+    FILE* fp = fopen(filename, "rb");
+    if (!fp) {
         std::cerr << "Error: Unable to open file " << filename << std::endl;
         return {};
     }
 
-    // Skip the header (assuming PNG header)
-    file.seekg(8);
-
-    // Read image data
-    std::vector<std::vector<int>> table;
-    std::vector<int> row;
-    char pixel;
-    int number = 0;
-    while (file.get(pixel)) {
-        // Assuming white color is represented by '0'
-        // If pixel is not white, store '1'
-        row.push_back((pixel == 0xFF) ? 0 : 1);
-        if (pixel == '\n') {
-            table.push_back(row);
-            row.clear();
-        }
-        ++number;
+    // Initialize PNG structures
+    png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+    if (!png) {
+        std::cerr << "Error: png_create_read_struct failed" << std::endl;
+        fclose(fp);
+        return {};
     }
 
-    file.close();
+    png_infop info = png_create_info_struct(png);
+    if (!info) {
+        std::cerr << "Error: png_create_info_struct failed" << std::endl;
+        png_destroy_read_struct(&png, nullptr, nullptr);
+        fclose(fp);
+        return {};
+    }
 
-    return table;
+    // Set error handling
+    if (setjmp(png_jmpbuf(png))) {
+        std::cerr << "Error: Error during PNG read" << std::endl;
+        png_destroy_read_struct(&png, &info, nullptr);
+        fclose(fp);
+        return {};
+    }
+
+    // Initialize PNG IO
+    png_init_io(png, fp);
+    png_read_info(png, info);
+
+    width = png_get_image_width(png, info);
+    height = png_get_image_height(png, info);
+    int bit_depth = png_get_bit_depth(png, info);
+    int color_type = png_get_color_type(png, info);
+
+    // Ensure PNG image is in RGBA format
+    if (color_type != PNG_COLOR_TYPE_RGBA) {
+        std::cerr << "Error: PNG image is not in RGBA format" << std::endl;
+        png_destroy_read_struct(&png, &info, nullptr);
+        fclose(fp);
+        return {};
+    }
+
+    // Allocate memory for image data
+    png_bytep row_buffer = (png_bytep)malloc(png_get_rowbytes(png, info));
+    if (!row_buffer) {
+        std::cerr << "Error: Memory allocation failed" << std::endl;
+        png_destroy_read_struct(&png, &info, nullptr);
+        fclose(fp);
+        return {};
+    }
+
+    // Read image data row by row
+    image.resize(height, std::vector<bool>(width, false));
+    for (int y = 0; y < height; ++y) {
+        png_read_row(png, row_buffer, nullptr);
+        png_bytep row = row_buffer;
+        for (int x = 0; x < width; ++x) {
+            // Check if the color is white (255, 255, 255, 255)
+            if (row[0] == 255 && row[1] == 255 && row[2] == 255 && row[3] == 255) {
+                image[y][x] = true;
+            }
+            row += 4; // Move to the next pixel
+        }
+    }
+
+    // Cleanup
+    free(row_buffer);
+    png_destroy_read_struct(&png, &info, nullptr);
+    fclose(fp);
+
+    return image;
 }
+
+
 void resizeImage(std::vector<std::vector<int>>& table, int desiredWidth) {
     int originalHeight = table.empty() ? 0 : table[0].size();
     int originalWidth = table.size();originalWidth
