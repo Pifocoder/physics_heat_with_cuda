@@ -310,8 +310,8 @@ std::vector<std::vector<int>> loadImage(const char* filename) {
     return table;
 }
 void resizeImage(std::vector<std::vector<int>>& table, int desiredWidth) {
-    int originalWidth = table.empty() ? 0 : table[0].size();
-    int originalHeight = table.size();
+    int originalHeight = table.empty() ? 0 : table[0].size();
+    int originalWidth = table.size();originalWidth
     double aspectRatio = static_cast<double>(originalWidth) / originalHeight;
     int desiredHeight = static_cast<int>(round(desiredWidth / aspectRatio));
     
@@ -331,4 +331,8 @@ void resizeImage(std::vector<std::vector<int>>& table, int desiredWidth) {
     // Update the original table with the resized table
     table = std::move(resizedTable);
 }
+
+
+
+
 
