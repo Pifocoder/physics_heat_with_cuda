@@ -323,9 +323,9 @@ std::vector<std::vector<bool>> loadImage(const char* filename) {
     int bit_depth = png_get_bit_depth(png, info);
     int color_type = png_get_color_type(png, info);
 
-    // Ensure PNG image is in RGB format
-    if (color_type != PNG_COLOR_TYPE_RGB) {
-        std::cerr << "Error: PNG image is not in RGB format" << std::endl;
+    // Ensure PNG image is in RGBA format
+    if (color_type != PNG_COLOR_TYPE_RGBA) {
+        std::cerr << "Error: PNG image is not in RGBA format" << std::endl;
         png_destroy_read_struct(&png, &info, nullptr);
         fclose(fp);
         return {};
@@ -346,13 +346,13 @@ std::vector<std::vector<bool>> loadImage(const char* filename) {
         png_read_row(png, row_buffer, nullptr);
         png_bytep row = row_buffer;
         for (int x = 0; x < width; ++x) {
-            // Check if the color is white (255, 255, 255)
-            if (row[0] == 255 && row[1] == 255 && row[2] == 255) {
+            // Check if the color is white (255, 255, 255, 255)
+            if (row[3] == 0) {
                 image[y][x] = true;
             } else {
                 image[y][x] = false;
             }
-            row += 3; // Move to the next pixel (RGB format)
+            row += 4; // Move to the next pixel
         }
     }
 
@@ -363,7 +363,6 @@ std::vector<std::vector<bool>> loadImage(const char* filename) {
 
     return image;
 }
-
 
 
 void resizeImage(std::vector<std::vector<bool>>& table, int desiredWidth) {
