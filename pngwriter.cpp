@@ -350,8 +350,8 @@ std::vector<std::vector<bool>> loadImage(const char* filename) {
             if (row[0] == 255 && row[1] == 255 && row[2] == 255 && row[3] == 255) {
                 image[y][x] = true;
             } else {
-		image[y][x] = true;
-	    }
+                image[y][x] = false;
+            }
             row += 4; // Move to the next pixel
         }
     }
