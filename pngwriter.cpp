@@ -293,15 +293,18 @@ std::vector<std::vector<int>> loadImage(const char* filename) {
     std::vector<std::vector<int>> table;
     std::vector<int> row;
     char pixel;
+    int number = 0;
     while (file.get(pixel)) {
         // Assuming white color is represented by '0'
         // If pixel is not white, store '1'
-        row.push_back((pixel == 0xFF) ? 0 : 1);
+        // row.push_back((pixel == 0xFF) ? 0 : 1);
         if (pixel == '\n') {
-            table.push_back(row);
-            row.clear();
+            // table.push_back(row);
+            // row.clear();
         }
+        ++number;
     }
+    std::cout << number << std::endl;
 
     file.close();
 
