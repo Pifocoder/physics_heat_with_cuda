@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
+#include <iostream>
 #include "pngwriter.h"
 
 #define BLOCK_SIZE_X 16
@@ -83,12 +83,13 @@ int main()
 
     cudaMalloc((void**)&d_Un, numElements*sizeof(float));
     cudaMalloc((void**)&d_Unp1, numElements*sizeof(float));
-    
+
     for (int i = 0; i < nx; i++)
     {
         for (int j = 0; j < ny; j++)
         {
             int index = getIndex(i, j, ny);
+            std::cout << index << std::endl;
             // Distance of point i, j from the origin
             if (data[i][j] == 1)
             {
