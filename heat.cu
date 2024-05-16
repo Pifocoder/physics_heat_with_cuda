@@ -61,9 +61,9 @@ __global__ void heat_kernel(int nx, int ny, int nz, double* d_Un, double* d_Unp1
 
 int main()
 {
-    const int nx = 200;   // Width of the area
-    const int ny = 200;   // Height of the area
-    const int nz = 200;   // Depth of the area
+    const int nx = 50;   // Width of the area
+    const int ny = 50;   // Height of the area
+    const int nz = 50;   // Depth of the area
 
     double a;     // Diffusion constant
     std::cout << "Enter the diffusion constant (a): ";
@@ -174,6 +174,7 @@ int main()
                         double uip1jk = h_Un[getIndex(i+1, j, k, ny, nz)];
                         double uijp1k = h_Un[getIndex(i, j+1, k, ny, nz)];
                         double uijkp1 = h_Un[getIndex(i, j, k+1, ny, nz)];
+                        
                         
                         // Explicit scheme
 
