@@ -56,6 +56,7 @@ int main()
     auto data = loadImage("image.png");
     std::cout << "load" << std::endl;
     resizeImage(data, 200);
+    std::cout << "resizeImage"  << data.size() << " " << data[0].size() << std::endl;
 
     const int ny = data[0].size();
     const int nx = data.size();   // Width of the area
