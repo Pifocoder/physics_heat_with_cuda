@@ -53,7 +53,10 @@ __global__ void heat_kernel(int nx, int ny, float* d_Un, float* d_Unp1, float aT
 
 int main()
 {
-    const int nx = 200;   // Width of the area
+    auto data = loadImage("image.png");
+    resizeImage(data, 200);
+    const int ny = data[0].size();
+    const int nx = data.size();   // Width of the area
 
     const float a = 0.5;     // Diffusion constant
 
@@ -66,11 +69,6 @@ int main()
     const float dt = dx2 * dy2 / (2.0 * a * (dx2 + dy2)); // Largest stable time step
     const int numSteps = 50000;                             // Number of time steps
     const int outputEvery = 1000;                          // How frequently to write output image
-
-    // Initializing the data with a pattern of disk of radius of 1/6 of the width
-    auto data = loadImage("image.png");
-    resizeImage(data, nx);
-    const int ny = data[0].size();
 
     int numElements = nx*ny;
 
