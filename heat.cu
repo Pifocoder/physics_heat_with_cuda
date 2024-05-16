@@ -70,8 +70,8 @@ int main()
     const float dy2 = dy*dy;
 
     const float dt = dx2 * dy2 / (2.0 * a * (dx2 + dy2)); // Largest stable time step
-    const int numSteps = 50000;                             // Number of time steps
-    const int outputEvery = 1000;                          // How frequently to write output image
+    const int numSteps = 5000;                             // Number of time steps
+    const int outputEvery = 100;                          // How frequently to write output image
 
     int numElements = nx*ny;
 
