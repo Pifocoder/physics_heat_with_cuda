@@ -148,6 +148,28 @@ int main()
             char filename[64];
             sprintf(filename, "heat_%04d.png", n);
             
+            int sum_temp_in = 0;
+            int number_in = 0;
+            int sum_temp_out = 0;
+            int number_out = 0;
+            for (int i = 0; i < nx; i++)
+            {
+                for (int j = 0; j < ny; j++)
+                {
+                    for (int k = 0; k < nz; ++k) {
+                        int index = getIndex(i, j,k, ny, nz);
+                        // Distance of point i, j from the origin
+                        if ((abs(i - center_x) <= object_x / 2) && (abs(j - center_y) <= object_y / 2) && (abs(k - center_z) <= object_z / 2)) {
+                            sum_temp_in += h_Un[index];
+                            ++number_in;
+                        } else {
+                            sum_temp_out += h_Un[index];
+                            ++number_out;
+                        }
+                    }
+                }
+            }
+            std::cout << "Mean temperature in the start zone" << sum_temp_in / number_in << ", out: " << sum_temp_out / number_out << std::endl;
             //save_stats(h_Un, nx, ny, nz, object_x, object_y, object_z, filename, 'c');
         }
         // Swapping the pointers for the next timestep
