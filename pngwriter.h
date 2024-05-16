@@ -4,7 +4,7 @@
 #include <vector>
 int save_png(float *data, const int nx, const int ny, const char *fname,
              const char lang);
-std::vector<std::vector<int>> loadImage(const char* filename);
+std::vector<std::vector<bool>> loadImage(const char* filename);
 
-void resizeImage(std::vector<std::vector<int>>& table, int desiredWidth);
+void resizeImage(std::vector<std::vector<bool>>& table, int desiredWidth);
 #endif

@@ -92,7 +92,7 @@ int main()
             int index = getIndex(i, j, ny);
            
             // Distance of point i, j from the origin
-            if (data[i][j] == 1)
+            if (data[i][j])
             {
                 h_Un[index] = 65.0;
             }
