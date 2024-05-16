@@ -150,6 +150,7 @@ int main()
             int number_in = 0;
             int sum_temp_out = 0;
             int number_out = 0;
+            int res = 0;
             for (int i = 0; i < nx; i++)
             {
                 for (int j = 0; j < ny; j++)
@@ -175,10 +176,11 @@ int main()
                         float uijkp1 = h_Un[getIndex(i, j, k+1, ny, nz)];
                         
                         // Explicit scheme
-                        std::cout <<  a*dt * ( (uim1jk - 2.0*uij + uip1jk)/dx2 + (uijm1k - 2.0*uij + uijp1k)/dy2 + (uijkm1 - 2.0*uij + uijkp1)/dz2) << " ";
+                        res +=  a*dt * ( (uim1jk - 2.0*uij + uip1jk)/dx2 + (uijm1k - 2.0*uij + uijp1k)/dy2 + (uijkm1 - 2.0*uij + uijkp1)/dz2) << " ";
                             }
                 }
             }
+            std::cout << res << std::endl;
             std::cout << "Mean temperature in the start zone" << sum_temp_in << " " << number_in << ", out: " << sum_temp_out << " " <<  number_out << std::endl;
             //save_stats(h_Un, nx, ny, nz, object_x, object_y, object_z, filename, 'c');
         }
