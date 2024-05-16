@@ -54,7 +54,6 @@ __global__ void heat_kernel(int nx, int ny, float* d_Un, float* d_Unp1, float aT
 int main()
 {
     const int nx = 200;   // Width of the area
-    const int ny = 200;   // Height of the area
 
     const float a = 0.5;     // Diffusion constant
 
@@ -68,6 +67,11 @@ int main()
     const int numSteps = 50000;                             // Number of time steps
     const int outputEvery = 1000;                          // How frequently to write output image
 
+    // Initializing the data with a pattern of disk of radius of 1/6 of the width
+    auto data = loadImage("image.png");
+    resizeImage(data, nx);
+    const int ny = data[0].size();
+
     int numElements = nx*ny;
 
     // Allocate two sets of data for current and next timesteps
@@ -79,11 +83,7 @@ int main()
 
     cudaMalloc((void**)&d_Un, numElements*sizeof(float));
     cudaMalloc((void**)&d_Unp1, numElements*sizeof(float));
-
-    // Initializing the data with a pattern of disk of radius of 1/6 of the width
-    auto data = loadImage("image.png");
-    resizeImage(data, nx);
-
+    
     for (int i = 0; i < nx; i++)
     {
         for (int j = 0; j < ny; j++)
