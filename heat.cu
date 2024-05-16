@@ -51,9 +51,8 @@ __global__ void heat_kernel(int nx, int ny, int nz, float* d_Un, float* d_Unp1, 
                 float uijp1k = d_Un[getIndex(i, j+1, k, ny, nz)];
                 float uijkp1 = d_Un[getIndex(i, j, k+1, ny, nz)];
                 
-                std::cout << i << " "<< j << " "<< k  << " " << uij << std::endl;
                 // Explicit scheme
-                d_Unp1[index] = uij + aTimesDt * ( (uim1jk - 2.0*uij + uip1jk)/dx2 + (uijm1k - 2.0*uij + uijp1k)/dy2+ (uijkm1 - 2.0*uij + uijkp1)/dz2);
+                d_Unp1[index] = uij + aTimesDt * ( (uim1jk - 2.0*uij + uip1jk)/dx2 + (uijm1k - 2.0*uij + uijp1k)/dy2 + (uijkm1 - 2.0*uij + uijkp1)/dz2);
             }
         }
     }
@@ -170,7 +169,7 @@ int main()
                     }
                 }
             }
-            std::cout << "Mean temperature in the start zone" << sum_temp_in / number_in << ", out: " << sum_temp_out / number_out << std::endl;
+            std::cout << "Mean temperature in the start zone" << sum_temp_in << " " << number_in << ", out: " << sum_temp_out << " " <<  number_out << std::endl;
             //save_stats(h_Un, nx, ny, nz, object_x, object_y, object_z, filename, 'c');
         }
         // Swapping the pointers for the next timestep
