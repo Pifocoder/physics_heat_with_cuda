@@ -145,9 +145,7 @@ int main()
         if (n % outputEvery == 0)
         {
             cudaMemcpy(h_Un, d_Un, numElements*sizeof(float), cudaMemcpyDeviceToHost);
-            char filename[64];
-            sprintf(filename, "heat_%04d.png", n);
-            
+
             int sum_temp_in = 0;
             int number_in = 0;
             int sum_temp_out = 0;
@@ -166,7 +164,19 @@ int main()
                             sum_temp_out += h_Un[index];
                             ++number_out;
                         }
-                    }
+
+                        float uij = h_Un[index];
+                        float uim1jk = h_Un[getIndex(i-1, j, k, ny, nz)];
+                        float uijm1k = h_Un[getIndex(i, j-1, k, ny, nz)];
+                        float uijkm1 = h_Un[getIndex(i, j, k-1, ny, nz)];
+                        
+                        float uip1jk = h_Un[getIndex(i+1, j, k, ny, nz)];
+                        float uijp1k = h_Un[getIndex(i, j+1, k, ny, nz)];
+                        float uijkp1 = h_Un[getIndex(i, j, k+1, ny, nz)];
+                        
+                        // Explicit scheme
+                        std::cout <<  a*dt * ( (uim1jk - 2.0*uij + uip1jk)/dx2 + (uijm1k - 2.0*uij + uijp1k)/dy2 + (uijkm1 - 2.0*uij + uijkp1)/dz2) << " ";
+                            }
                 }
             }
             std::cout << "Mean temperature in the start zone" << sum_temp_in << " " << number_in << ", out: " << sum_temp_out << " " <<  number_out << std::endl;
