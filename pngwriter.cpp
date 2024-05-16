@@ -277,7 +277,6 @@ void cmap(double value, const double scaling, const double offset,
     }
 }
 
-
 // Function to load image file and return table
 std::vector<std::vector<bool>> loadImage(const char* filename) {
     int width;
