@@ -335,17 +335,3 @@ void resizeImage(std::vector<std::vector<int>>& table, int desiredWidth) {
     table = std::move(resizedTable);
 }
 
-int main() {
-    // Load image and get table
-    std::vector<std::vector<int>> imageTable = loadImage(INPUT_FILENAME);
-
-    // Display the table
-    for (const auto& row : imageTable) {
-        for (int pixel : row) {
-            std::cout << pixel << " ";
-        }
-        std::cout << std::endl;
-    }
-
-    return 0;
-}
