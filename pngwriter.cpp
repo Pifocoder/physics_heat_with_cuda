@@ -304,7 +304,6 @@ std::vector<std::vector<int>> loadImage(const char* filename) {
         }
         ++number;
     }
-    std::cout << number << std::endl;
 
     file.close();
 

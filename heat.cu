@@ -54,7 +54,9 @@ __global__ void heat_kernel(int nx, int ny, float* d_Un, float* d_Unp1, float aT
 int main()
 {
     auto data = loadImage("image.png");
+    std::cout << "load" << std::endl;
     resizeImage(data, 200);
+
     const int ny = data[0].size();
     const int nx = data.size();   // Width of the area
 
