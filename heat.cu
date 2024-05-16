@@ -80,7 +80,7 @@ int main()
     const double dt = dx2 * dy2 * dz2/ (2.0 * a * (dx2 + dy2 + dz2)); // Largest stable time step
     const int numSteps = 500000;                                       // Number of time steps
     const int outputEvery = 1000;                                    // How frequently to write output image
-
+    std::cout << a * dt << std::endl;
     int numElements = nx*ny*nz;
 
     // Allocate two sets of data for current and next timesteps
@@ -176,6 +176,7 @@ int main()
                         double uijkp1 = h_Un[getIndex(i, j, k+1, ny, nz)];
                         
                         // Explicit scheme
+
                         res = std::max(a*dt * ( (uim1jk - 2.0*uij + uip1jk)/dx2 + (uijm1k - 2.0*uij + uijp1k)/dy2 + (uijkm1 - 2.0*uij + uijkp1)/dz2), res);
                             }
                 }
