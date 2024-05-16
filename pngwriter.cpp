@@ -347,7 +347,7 @@ std::vector<std::vector<bool>> loadImage(const char* filename) {
         png_bytep row = row_buffer;
         for (int x = 0; x < width; ++x) {
             // Check if the color is white (255, 255, 255, 255)
-            if (row[0] == 255 && row[1] == 255 && row[2] == 255 && row[3] == 255) {
+            if (row[0] == 255 && row[1] == 255 && row[2] == 255 && row[3] == 0) {
                 image[y][x] = true;
             } else {
                 image[y][x] = false;
