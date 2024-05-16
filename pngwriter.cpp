@@ -320,7 +320,7 @@ void resizeImage(std::vector<std::vector<int>>& table, int desiredWidth) {
     int originalWidth = table.empty() ? 0 : table[0].size();
     int originalHeight = table.size();
     double aspectRatio = static_cast<double>(originalWidth) / originalHeight;
-    int desiredHeight = static_cast<int>(std::round(desiredWidth / aspectRatio));
+    int desiredHeight = static_cast<int>(round(desiredWidth / aspectRatio));
 
     // Resize the table
     std::vector<std::vector<int>> resizedTable(desiredHeight, std::vector<int>(desiredWidth, 0));
