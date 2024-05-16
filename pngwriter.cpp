@@ -314,11 +314,13 @@ void resizeImage(std::vector<std::vector<int>>& table, int desiredWidth) {
     int originalHeight = table.size();
     double aspectRatio = static_cast<double>(originalWidth) / originalHeight;
     int desiredHeight = static_cast<int>(round(desiredWidth / aspectRatio));
-
+    
+    std::cout << "init" << std::endl;
     // Resize the table
     std::vector<std::vector<int>> resizedTable(desiredHeight, std::vector<int>(desiredWidth, 0));
     for (int y = 0; y < desiredHeight; ++y) {
         for (int x = 0; x < desiredWidth; ++x) {
+            std::cout << x << " " << y << std::endl;
             resizedTable[y][x] = table[static_cast<int>(y * static_cast<double>(originalHeight) / desiredHeight)]
                                      [static_cast<int>(x * aspectRatio)];
         }
