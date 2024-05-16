@@ -78,7 +78,7 @@ int main()
     const float dz2 = dz*dz;
 
     const float dt = dx2 * dy2 * dz2/ (2.0 * a * (dx2 + dy2 + dz2)); // Largest stable time step
-    const int numSteps = 5000;                                       // Number of time steps
+    const int numSteps = 500000;                                       // Number of time steps
     const int outputEvery = 1000;                                    // How frequently to write output image
 
     int numElements = nx*ny*nz;
