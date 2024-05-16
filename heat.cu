@@ -121,7 +121,6 @@ int main()
     // Main loop
     for (int n = 0; n <= numSteps; n++)
     {
-        std::cout << n << std::endl;
         heat_kernel<<<numBlocks, threadsPerBlock>>>(nx, ny, d_Un, d_Unp1, a*dt, dx2, dy2);
         // Write the output if needed
         if (n % outputEvery == 0)
