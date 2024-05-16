@@ -278,12 +278,8 @@ void cmap(double value, const double scaling, const double offset,
 }
 
 
-
-const char* INPUT_FILENAME = "image.png";
-const int DESIRED_WIDTH = 200; // Desired width of the table
-
 // Function to load image file and return table
-std::vector<std::vector<int>> loadImage(const char* filename, int& width, int& height) {
+std::vector<std::vector<int>> loadImage(const char* filename) {
     std::ifstream file(filename, std::ios::in | std::ios::binary);
     if (!file.is_open()) {
         std::cerr << "Error: Unable to open file " << filename << std::endl;
@@ -297,18 +293,13 @@ std::vector<std::vector<int>> loadImage(const char* filename, int& width, int& h
     std::vector<std::vector<int>> table;
     std::vector<int> row;
     char pixel;
-    width = 0;
-    height = 0;
     while (file.get(pixel)) {
         // Assuming white color is represented by '0'
         // If pixel is not white, store '1'
         row.push_back((pixel == 0xFF) ? 0 : 1);
-        width++;
         if (pixel == '\n') {
             table.push_back(row);
             row.clear();
-            width = 0;
-            height++;
         }
     }
 
