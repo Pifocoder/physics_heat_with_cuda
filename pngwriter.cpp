@@ -6,7 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <math>
+#include <cmath>
 
 /* Datatype for RGB pixel */
 typedef struct {
