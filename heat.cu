@@ -50,7 +50,8 @@ __global__ void heat_kernel(int nx, int ny, int nz, float* d_Un, float* d_Unp1, 
                 float uip1jk = d_Un[getIndex(i+1, j, k, ny, nz)];
                 float uijp1k = d_Un[getIndex(i, j+1, k, ny, nz)];
                 float uijkp1 = d_Un[getIndex(i, j, k+1, ny, nz)];
-
+                
+                std::cout << i << " "<< j << " "<< k  << " " << uij << std::endl;
                 // Explicit scheme
                 d_Unp1[index] = uij + aTimesDt * ( (uim1jk - 2.0*uij + uip1jk)/dx2 + (uijm1k - 2.0*uij + uijp1k)/dy2+ (uijkm1 - 2.0*uij + uijkp1)/dz2);
             }
@@ -114,7 +115,7 @@ int main()
         for (int j = 0; j < ny; j++)
         {
             for (int k = 0; k < nz; ++k) {
-                int index = getIndex(i, j,k, ny, nz);
+                int index = getIndex(i, j, k, ny, nz);
                 // Distance of point i, j from the origin
                 if ((abs(i - center_x) <= object_x / 2) && (abs(j - center_y) <= object_y / 2) && (abs(k - center_z) <= object_z / 2)) {
                     h_Un[index] = 65.0;
