@@ -89,7 +89,7 @@ int main()
         for (int j = 0; j < ny; j++)
         {
             int index = getIndex(i, j, ny);
-            std::cout << index << std::endl;
+           
             // Distance of point i, j from the origin
             if (data[i][j] == 1)
             {
@@ -102,12 +102,15 @@ int main()
         }
     }
 
+    std::cout << "Finished init temp" << std::endl;
     // Fill in the data on the next step to ensure that the boundaries are identical.
     memcpy(h_Unp1, h_Un, numElements*sizeof(float));
 
+    std::cout << "memcpy" << std::endl;
     cudaMemcpy(d_Un, h_Un, numElements*sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_Unp1, d_Un, numElements*sizeof(float), cudaMemcpyDeviceToDevice);
 
+    std::cout << "cudaMemcpy" << std::endl;
     // Timing
     clock_t start = clock();
 
@@ -117,6 +120,7 @@ int main()
     // Main loop
     for (int n = 0; n <= numSteps; n++)
     {
+        std::cout << n << std::endl;
         heat_kernel<<<numBlocks, threadsPerBlock>>>(nx, ny, d_Un, d_Unp1, a*dt, dx2, dy2);
         // Write the output if needed
         if (n % outputEvery == 0)
