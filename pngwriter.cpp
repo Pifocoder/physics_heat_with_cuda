@@ -317,13 +317,15 @@ void resizeImage(std::vector<std::vector<int>>& table, int desiredWidth) {
     
     std::cout << "init" << std::endl;
     // Resize the table
-    std::vector<std::vector<int>> resizedTable(desiredHeight, std::vector<int>(desiredWidth, 0));
+    std::vector<std::vector<int>> resizedTable(desiredWidth, std::vector<int>(desiredHeight, 0));
     for (int y = 0; y < desiredHeight; ++y) {
         for (int x = 0; x < desiredWidth; ++x) {
-            std::cout << x << " " << y << std::endl;
-            resizedTable[y][x] = table[static_cast<int>(y * static_cast<double>(originalHeight) / desiredHeight)]
+            
+            resizedTable[x][y] = table[static_cast<int>(y * static_cast<double>(originalHeight) / desiredHeight)]
                                      [static_cast<int>(x * aspectRatio)];
+                                     std::cout << resizedTable[x][y] << " ";
         }
+        std::cout << std::endl;
     }
 
     // Update the original table with the resized table
