@@ -52,7 +52,7 @@ __global__ void heat_kernel(int nx, int ny, int nz, float* d_Un, float* d_Unp1, 
                 float uijkp1 = d_Un[getIndex(i, j, k+1, ny, nz)];
                 
                 // Explicit scheme
-                d_Unp1[index] = uij + aTimesDt * ( (uim1jk - 2.0*uij + uip1jk)/dx2 + (uijm1k - 2.0*uij + uijp1k)/dy2);
+                d_Unp1[index] = uij + aTimesDt * ( (uim1jk - 2.0*uij + uip1jk)/dx2 + (uijm1k - 2.0*uij + uijp1k)/dy2+ (uijkm1 - 2.0*uij + uijkp1)/dz2);
             }
         }
     }
