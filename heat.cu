@@ -30,7 +30,7 @@ __host__ __device__ int getIndex(const int i, const int j, const int k,  const i
     return (i*width + j)*deep + k;
 }
 
-__global__ void heat_kernel(int nx, int ny, int nz, float* d_Un, float* d_Unp1, float aTimesDt, float dx2, float dy2, float dz2)
+__global__ void heat_kernel(int nx, int ny, int nz, double* d_Un, double* d_Unp1, double aTimesDt, double dx2, double dy2, double dz2)
 {
     // Going through the entire area
     int i = threadIdx.x + blockIdx.x*blockDim.x;
@@ -42,14 +42,14 @@ __global__ void heat_kernel(int nx, int ny, int nz, float* d_Un, float* d_Unp1, 
             int k = threadIdx.z + blockIdx.z*blockDim.z;
             if (k > 0 && k < nz-1) {
                 const int index = getIndex(i, j, k, ny, nz);
-                float uij = d_Un[index];
-                float uim1jk = d_Un[getIndex(i-1, j, k, ny, nz)];
-                float uijm1k = d_Un[getIndex(i, j-1, k, ny, nz)];
-                float uijkm1 = d_Un[getIndex(i, j, k-1, ny, nz)];
+                double uij = d_Un[index];
+                double uim1jk = d_Un[getIndex(i-1, j, k, ny, nz)];
+                double uijm1k = d_Un[getIndex(i, j-1, k, ny, nz)];
+                double uijkm1 = d_Un[getIndex(i, j, k-1, ny, nz)];
                 
-                float uip1jk = d_Un[getIndex(i+1, j, k, ny, nz)];
-                float uijp1k = d_Un[getIndex(i, j+1, k, ny, nz)];
-                float uijkp1 = d_Un[getIndex(i, j, k+1, ny, nz)];
+                double uip1jk = d_Un[getIndex(i+1, j, k, ny, nz)];
+                double uijp1k = d_Un[getIndex(i, j+1, k, ny, nz)];
+                double uijkp1 = d_Un[getIndex(i, j, k+1, ny, nz)];
                 
                 // Explicit scheme
                 d_Unp1[index] = uij + aTimesDt * ( (uim1jk - 2.0*uij + uip1jk)/dx2 + (uijm1k - 2.0*uij + uijp1k)/dy2+ (uijkm1 - 2.0*uij + uijkp1)/dz2);
@@ -65,49 +65,49 @@ int main()
     const int ny = 200;   // Height of the area
     const int nz = 200;   // Depth of the area
 
-    float a;     // Diffusion constant
+    double a;     // Diffusion constant
     std::cout << "Enter the diffusion constant (a): ";
     std::cin >> a;
 
-    const float dx = 0.01;   // Horizontal grid spacing 
-    const float dy = 0.01;   // Vertical grid spacing
-    const float dz = 0.01;
+    const double dx = 0.01;   // Horizontal grid spacing 
+    const double dy = 0.01;   // Vertical grid spacing
+    const double dz = 0.01;
 
-    const float dx2 = dx*dx;
-    const float dy2 = dy*dy;
-    const float dz2 = dz*dz;
+    const double dx2 = dx*dx;
+    const double dy2 = dy*dy;
+    const double dz2 = dz*dz;
 
-    const float dt = dx2 * dy2 * dz2/ (2.0 * a * (dx2 + dy2 + dz2)); // Largest stable time step
+    const double dt = dx2 * dy2 * dz2/ (2.0 * a * (dx2 + dy2 + dz2)); // Largest stable time step
     const int numSteps = 500000;                                       // Number of time steps
     const int outputEvery = 1000;                                    // How frequently to write output image
 
     int numElements = nx*ny*nz;
 
     // Allocate two sets of data for current and next timesteps
-    float* h_Un   = (float*)calloc(numElements, sizeof(float));
-    float* h_Unp1 = (float*)calloc(numElements, sizeof(float));
+    double* h_Un   = (double*)calloc(numElements, sizeof(double));
+    double* h_Unp1 = (double*)calloc(numElements, sizeof(double));
 
-    float* d_Un;
-    float* d_Unp1;
+    double* d_Un;
+    double* d_Unp1;
 
-    cudaMalloc((void**)&d_Un, numElements*sizeof(float));
-    cudaMalloc((void**)&d_Unp1, numElements*sizeof(float));
+    cudaMalloc((void**)&d_Un, numElements*sizeof(double));
+    cudaMalloc((void**)&d_Unp1, numElements*sizeof(double));
 
     
     // Initializing the data with a pattern of disk of radius of 1/6 of the width
-    float object_x;
+    double object_x;
     std::cout << "Enter the width of the object ";
     std::cin >> object_x;
-    float object_y;
+    double object_y;
     std::cout << "Enter the height of the object ";
     std::cin >> object_y;
-    float object_z;
+    double object_z;
     std::cout << "Enter the deep of the object ";
     std::cin >> object_z;
     
-    float center_x = nx/2;
-    float center_y = ny/2;
-    float center_z = nz/2;
+    double center_x = nx/2;
+    double center_y = ny/2;
+    double center_z = nz/2;
 
     for (int i = 0; i < nx; i++)
     {
@@ -117,7 +117,7 @@ int main()
                 int index = getIndex(i, j, k, ny, nz);
                 // Distance of point i, j from the origin
                 if ((abs(i - center_x) <= object_x / 2) && (abs(j - center_y) <= object_y / 2) && (abs(k - center_z) <= object_z / 2)) {
-                    h_Un[index] = 65.0;
+                    h_Un[index] = 10.0;
                 } else {
                     h_Un[index] = 5.0;
                 }
@@ -126,10 +126,10 @@ int main()
     }
 
     // Fill in the data on the next step to ensure that the boundaries are identical.
-    memcpy(h_Unp1, h_Un, numElements*sizeof(float));
+    memcpy(h_Unp1, h_Un, numElements*sizeof(double));
 
-    cudaMemcpy(d_Un, h_Un, numElements*sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_Unp1, d_Un, numElements*sizeof(float), cudaMemcpyDeviceToDevice);
+    cudaMemcpy(d_Un, h_Un, numElements*sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_Unp1, d_Un, numElements*sizeof(double), cudaMemcpyDeviceToDevice);
 
     // Timing
     clock_t start = clock();
@@ -144,13 +144,13 @@ int main()
         // Write the output if needed
         if (n % outputEvery == 0)
         {
-            cudaMemcpy(h_Un, d_Un, numElements*sizeof(float), cudaMemcpyDeviceToHost);
+            cudaMemcpy(h_Un, d_Un, numElements*sizeof(double), cudaMemcpyDeviceToHost);
 
             int sum_temp_in = 0;
             int number_in = 0;
             int sum_temp_out = 0;
             int number_out = 0;
-            float res = 0;
+            double res = 0;
             for (int i = 0; i < nx; i++)
             {
                 for (int j = 0; j < ny; j++)
@@ -166,14 +166,14 @@ int main()
                             ++number_out;
                         }
 
-                        float uij = h_Un[index];
-                        float uim1jk = h_Un[getIndex(i-1, j, k, ny, nz)];
-                        float uijm1k = h_Un[getIndex(i, j-1, k, ny, nz)];
-                        float uijkm1 = h_Un[getIndex(i, j, k-1, ny, nz)];
+                        double uij = h_Un[index];
+                        double uim1jk = h_Un[getIndex(i-1, j, k, ny, nz)];
+                        double uijm1k = h_Un[getIndex(i, j-1, k, ny, nz)];
+                        double uijkm1 = h_Un[getIndex(i, j, k-1, ny, nz)];
                         
-                        float uip1jk = h_Un[getIndex(i+1, j, k, ny, nz)];
-                        float uijp1k = h_Un[getIndex(i, j+1, k, ny, nz)];
-                        float uijkp1 = h_Un[getIndex(i, j, k+1, ny, nz)];
+                        double uip1jk = h_Un[getIndex(i+1, j, k, ny, nz)];
+                        double uijp1k = h_Un[getIndex(i, j+1, k, ny, nz)];
+                        double uijkp1 = h_Un[getIndex(i, j, k+1, ny, nz)];
                         
                         // Explicit scheme
                         res +=  a*dt * ( (uim1jk - 2.0*uij + uip1jk)/dx2 + (uijm1k - 2.0*uij + uijp1k)/dy2 + (uijkm1 - 2.0*uij + uijkp1)/dz2);
