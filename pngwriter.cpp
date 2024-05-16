@@ -364,29 +364,20 @@ std::vector<std::vector<bool>> loadImage(const char* filename) {
 
 
 void resizeImage(std::vector<std::vector<bool>>& table, int desiredWidth) {
-    int originalHeight = table.empty() ? 0 : table[0].size();
-    int originalWidth = table.size();
+    int originalWidth = table.empty() ? 0 : table[0].size();
+    int originalHeight = table.size();
     double aspectRatio = static_cast<double>(originalWidth) / originalHeight;
-    int desiredHeight = static_cast<int>(round(desiredWidth / aspectRatio));
-    
-    std::cout << "init" << std::endl;
+    int desiredHeight = static_cast<int>(std::round(desiredWidth / aspectRatio));
+
     // Resize the table
-    std::vector<std::vector<bool>> resizedTable(desiredWidth, std::vector<bool>(desiredHeight, 0));
+    std::vector<std::vector<bool>> resizedTable(desiredHeight, std::vector<bool>(desiredWidth, 0));
     for (int y = 0; y < desiredHeight; ++y) {
         for (int x = 0; x < desiredWidth; ++x) {
-            
-            resizedTable[x][y] = table[static_cast<int>(y * static_cast<double>(originalHeight) / desiredHeight)]
+            resizedTable[y][x] = table[static_cast<int>(y * static_cast<double>(originalHeight) / desiredHeight)]
                                      [static_cast<int>(x * aspectRatio)];
-                                     std::cout << resizedTable[x][y] << " ";
         }
-        std::cout << std::endl;
     }
 
     // Update the original table with the resized table
     table = std::move(resizedTable);
 }
-
-
-
-
-
