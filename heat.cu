@@ -65,7 +65,7 @@ int main()
     const float dy2 = dy*dy;
 
     const float dt = dx2 * dy2 / (2.0 * a * (dx2 + dy2)); // Largest stable time step
-    const int numSteps = 5000;                             // Number of time steps
+    const int numSteps = 50000;                             // Number of time steps
     const int outputEvery = 1000;                          // How frequently to write output image
 
     int numElements = nx*ny;
@@ -81,15 +81,16 @@ int main()
     cudaMalloc((void**)&d_Unp1, numElements*sizeof(float));
 
     // Initializing the data with a pattern of disk of radius of 1/6 of the width
-    float radius2 = (nx/6.0) * (nx/6.0);
+    auto data = loadImage("image.png");
+    resizeImage(data, nx);
+
     for (int i = 0; i < nx; i++)
     {
         for (int j = 0; j < ny; j++)
         {
             int index = getIndex(i, j, ny);
             // Distance of point i, j from the origin
-            float ds2 = (i - nx/2) * (i - nx/2) + (j - ny/2)*(j - ny/2);
-            if (ds2 < radius2)
+            if (data[i][j] == 1)
             {
                 h_Un[index] = 65.0;
             }

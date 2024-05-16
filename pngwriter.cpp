@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "pngwriter.h"
+#include <iostream>
+#include <fstream>
+#include <vector>
 
 /* Datatype for RGB pixel */
 typedef struct {
@@ -271,4 +274,77 @@ void cmap(double value, const double scaling, const double offset,
         pix->green = heat_colormap[ival][1];
         pix->blue = heat_colormap[ival][2];
     }
+}
+
+
+
+const char* INPUT_FILENAME = "image.png";
+const int DESIRED_WIDTH = 200; // Desired width of the table
+
+// Function to load image file and return table
+std::vector<std::vector<int>> loadImage(const char* filename, int& width, int& height) {
+    std::ifstream file(filename, std::ios::in | std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "Error: Unable to open file " << filename << std::endl;
+        return {};
+    }
+
+    // Skip the header (assuming PNG header)
+    file.seekg(8);
+
+    // Read image data
+    std::vector<std::vector<int>> table;
+    std::vector<int> row;
+    char pixel;
+    width = 0;
+    height = 0;
+    while (file.get(pixel)) {
+        // Assuming white color is represented by '0'
+        // If pixel is not white, store '1'
+        row.push_back((pixel == 0xFF) ? 0 : 1);
+        width++;
+        if (pixel == '\n') {
+            table.push_back(row);
+            row.clear();
+            width = 0;
+            height++;
+        }
+    }
+
+    file.close();
+
+    return table;
+}
+void resizeImage(std::vector<std::vector<int>>& table, int desiredWidth) {
+    int originalWidth = table.empty() ? 0 : table[0].size();
+    int originalHeight = table.size();
+    double aspectRatio = static_cast<double>(originalWidth) / originalHeight;
+    int desiredHeight = static_cast<int>(std::round(desiredWidth / aspectRatio));
+
+    // Resize the table
+    std::vector<std::vector<int>> resizedTable(desiredHeight, std::vector<int>(desiredWidth, 0));
+    for (int y = 0; y < desiredHeight; ++y) {
+        for (int x = 0; x < desiredWidth; ++x) {
+            resizedTable[y][x] = table[static_cast<int>(y * static_cast<double>(originalHeight) / desiredHeight)]
+                                     [static_cast<int>(x * aspectRatio)];
+        }
+    }
+
+    // Update the original table with the resized table
+    table = std::move(resizedTable);
+}
+
+int main() {
+    // Load image and get table
+    std::vector<std::vector<int>> imageTable = loadImage(INPUT_FILENAME);
+
+    // Display the table
+    for (const auto& row : imageTable) {
+        for (int pixel : row) {
+            std::cout << pixel << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    return 0;
 }
