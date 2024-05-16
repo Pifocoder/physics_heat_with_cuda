@@ -53,7 +53,7 @@ __global__ void heat_kernel(int nx, int ny, float* d_Un, float* d_Unp1, float aT
 
 int main()
 {
-    auto data = loadImage("image.png");
+    auto data = loadImage("image2.png");
     std::cout << "load" << std::endl;
     resizeImage(data, 200);
     std::cout << "resizeImage"  << data.size() << " " << data[0].size() << std::endl;
