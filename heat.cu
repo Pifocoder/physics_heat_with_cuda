@@ -150,7 +150,7 @@ int main()
             int number_in = 0;
             int sum_temp_out = 0;
             int number_out = 0;
-            double res = 0;
+            double res = -10000000000;
             for (int i = 0; i < nx; i++)
             {
                 for (int j = 0; j < ny; j++)
@@ -176,7 +176,7 @@ int main()
                         double uijkp1 = h_Un[getIndex(i, j, k+1, ny, nz)];
                         
                         // Explicit scheme
-                        res +=  a*dt * ( (uim1jk - 2.0*uij + uip1jk)/dx2 + (uijm1k - 2.0*uij + uijp1k)/dy2 + (uijkm1 - 2.0*uij + uijkp1)/dz2);
+                        res = std::max(a*dt * ( (uim1jk - 2.0*uij + uip1jk)/dx2 + (uijm1k - 2.0*uij + uijp1k)/dy2 + (uijkm1 - 2.0*uij + uijkp1)/dz2), res);
                             }
                 }
             }
